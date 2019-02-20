@@ -1,5 +1,5 @@
 export interface ResultEventModel {
-    id:String; // created | received | seen
-    idOwner:number;
-    createdAt:Date;
-  }
+    id: string; // created | received | seen
+    idOwner: number;
+    createdAt: Date;
+}
