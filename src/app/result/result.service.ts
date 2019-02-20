@@ -3,8 +3,6 @@ import { ResultModel } from './model/result.model';
 import { ResultEventModel } from './model/result-event.model';
 import { unusedValueExportToPlacateAjd } from '@angular/core/src/render3/interfaces/injector';
 import {of} from 'rxjs/index';
-import {ResultsEvenMock} from './mock/result-event.mock';
-import {ResultSeenMock, ResultsMock, ResultUnseenMock} from './mock/result.mock';
 
 @Injectable({
   providedIn: 'root'
@@ -12,35 +10,39 @@ import {ResultSeenMock, ResultsMock, ResultUnseenMock} from './mock/result.mock'
 export class ResultService {
 
   constructor() { }
+  results: Array<ResultModel> = [];
 
   public addResult(newResult: ResultModel) {
-    return new ResultModel();
+    this.results.push(newResult);
+    return this.results;
   }
 
   public seenResult(idResult: number) {
-      ResultSeenMock.isSeen = true;
-      return ResultSeenMock;
+    const resIndex = this.results.findIndex(result => result.id === idResult);
+    this.results[resIndex].isSeen = true;
+    return this.results;
   }
 
   public unseenResult(idResult: number) {
-    ResultUnseenMock.isSeen = false;
-    return ResultUnseenMock;
+      const resIndex = this.results.findIndex(result => result.id === idResult);
+      this.results[resIndex].isSeen = false;
+      return this.results;
   }
 
   public getAllResult(): Array<ResultModel> {
-    return ResultsMock;
+    return this.results;
   }
 
   public getAllResultSeen(): Array<ResultModel> {
-    return [ResultSeenMock];
+    return this.results.filter( result => result.isSeen === true);
   }
 
   public getAllResultUnSeen(): Array<ResultModel> {
-    return [ResultUnseenMock];
+      return this.results.filter( result => result.isSeen === false);
   }
 
   public numberOfEventSeen(): number
   {
-    return ResultsEvenMock.length;
+      return this.results.filter( result => result.isSeen === true).length;
   }
 }
