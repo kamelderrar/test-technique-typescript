@@ -1,4 +1,4 @@
-import {TestBed, fakeAsync} from '@angular/core/testing';
+import {TestBed, fakeAsync, tick} from '@angular/core/testing';
 import {ResultService} from './result.service';
 import {ResultModel} from './model/result.model';
 import {HttpClientModule} from '@angular/common/http';
@@ -65,122 +65,151 @@ describe('ResultService', () => {
     /* step 2 : 3 resultats */
     describe('aprés l\'ajout de 3 resultats,', () => {
 
-      beforeEach(() => {
-          // init le service avec 3 resultats
-          resultService.results = [
-            {
-                id: 46,
-                idOwner: 76,
-                idRecipients: [42],
-                isSeen: false,
-                eventResults: [],
-                contentOfResult: 'Test'
-            },
-            {
-                id: 47,
-                idOwner: 76,
-                idRecipients: [42],
-                isSeen: false,
-                eventResults: [],
-                contentOfResult: 'Test'
-            },
-            {
-                id: 48,
-                idOwner: 76,
-                idRecipients: [42],
-                isSeen: false,
-                eventResults: [],
-                contentOfResult: 'Test'
-            },
-        ];
-      });
+        beforeEach(() => {
+            // init le service avec 3 resultats
+            resultService.results = [
+                {
+                    id: 46,
+                    idOwner: 76,
+                    idRecipients: [42],
+                    isSeen: false,
+                    eventResults: [],
+                    contentOfResult: 'Test'
+                },
+                {
+                    id: 47,
+                    idOwner: 76,
+                    idRecipients: [42],
+                    isSeen: false,
+                    eventResults: [],
+                    contentOfResult: 'Test'
+                },
+                {
+                    id: 48,
+                    idOwner: 76,
+                    idRecipients: [42],
+                    isSeen: false,
+                    eventResults: [],
+                    contentOfResult: 'Test'
+                },
+            ];
+        });
 
-      it('devrait avoir une liste de 3 resultats non vue aprés l\'ajout de 3 resultat.',
-        fakeAsync(() => {
-            expect(resultService.getAllResultUnSeen().length).toEqual(3);
-        })
-      );
+        it('devrait avoir une liste de 3 resultats non vue aprés l\'ajout de 3 resultat.',
+            fakeAsync(() => {
+                expect(resultService.getAllResultUnSeen().length).toEqual(3);
+            })
+        );
 
-      it('ne devrait pas authorisé l\'ajout d\'un résultats avec un id existent',
-        fakeAsync(() => {
-            const result: ResultModel = {
-                id: 47,
-                idOwner: 76,
-                idRecipients: [42],
-                isSeen: true,
-                eventResults: [],
-                contentOfResult: 'Test'
-            };
-            expect(resultService.addResult(result)).toEqual(false);
-        })
-      );
+        it('ne devrait pas authorisé l\'ajout d\'un résultats avec un id existent',
+            fakeAsync(() => {
+                const result: ResultModel = {
+                    id: 47,
+                    idOwner: 76,
+                    idRecipients: [42],
+                    isSeen: true,
+                    eventResults: [],
+                    contentOfResult: 'Test'
+                };
+                expect(resultService.addResult(result)).toEqual(null);
+            })
+        );
 
-      it('devrait avoir 1 resultats vue dans la liste aprés la vision d\'un resultat',
-        fakeAsync(() => {
-          resultService.seenResult(47);
-            expect(resultService.getAllResultSeen().length).toEqual(1);
-        })
-      );
+        it('devrait avoir 1 resultats vue dans la liste aprés la vision d\'un resultat',
+            fakeAsync(() => {
+                resultService.seenResult(47);
+                expect(resultService.getAllResultSeen().length).toEqual(1);
+            })
+        );
 
-      it('devrait avoir les 3 resultats vue dans la liste aprés qu\'il soit tous vue',
-        fakeAsync(() => {
-            resultService.results.map(result => resultService.seenResult(result.id));
-            expect(resultService.getAllResultSeen().length).toEqual(3);
-        })
-      );
+        it('devrait avoir les 3 resultats vue dans la liste aprés qu\'il soit tous vue',
+            fakeAsync(() => {
+                resultService.results.map(result => resultService.seenResult(result.id));
+                expect(resultService.getAllResultSeen().length).toEqual(3);
+            })
+        );
 
-      it('devrait avoir plus que 2 resultats vue dans la liste aprés qu\'il soit tous vue puis 1 ou la vue est enlevé',
-        fakeAsync(() => {
-            resultService.results.map(result => resultService.seenResult(result.id));
-            expect(resultService.getAllResultSeen().length).toBeGreaterThan(2);
-            resultService.unseenResult(47);
-            expect(resultService.getAllResultUnSeen().length).toEqual(1);
-        })
-      );
+        it('devrait avoir plus que 2 resultats vue dans la liste aprés qu\'il soit tous vue puis 1 ou la vue est enlevé',
+            fakeAsync(() => {
+                resultService.results.map(result => resultService.seenResult(result.id));
+                expect(resultService.getAllResultSeen().length).toBeGreaterThan(2);
+                resultService.unseenResult(47);
+                expect(resultService.getAllResultUnSeen().length).toEqual(1);
+            })
+        );
 
-      it('ne devrait pas planté aprés la vision d\'un resultat non ajouté',
-        fakeAsync(() => {
-          expect(resultService.seenResult(88)).toEqual(false);
-        })
-      );
+        it('ne devrait pas planté aprés la vision d\'un resultat non ajouté',
+            fakeAsync(() => {
+                expect(resultService.seenResult(88)).toEqual(null);
+            })
+        );
     });
 
-    //
-    // /* step 3 (evenement) */
-    // describe(',aprés l\'ajout de 3 resultats,', () => {
-    //
-    //   beforeEach(() => {
-    //     // init le service avec 3 resultats (doit etre identique que le step 2)
-    //   });
-    //
-    //   //ps : je ne veux pas que les event de création soi initialisé dans le beforeEach ci dessus mais directement dans le resultService
-    //   it('devrait avoir la list des résultat dans l\'order de création ( en se basant sur les events de création)',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    //
-    //   it('devrait avoir 1 event a la date de maintenant quand 1 résultat est vue',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    //
-    //   it('devrait avoir 2 events avec 2 dates différent aprés la vision d\'un resultat puis la suppression de la vision',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    //
-    //   it('devrait avoir une fonction qui retourne une liste ordonnée des resultats par rapport au dernier modifier',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    //
-    // });
-    //
-    //
-    // /* proposé de nouveau test */
+    /* step 3 (evenement) */
+    describe(',aprés l\'ajout de 3 resultats,', () => {
 
+        beforeEach(() => {
+            resultService = new ResultService();
+
+            // init le service avec 3 resultats (doit etre identique que le step 2)
+            resultService.addMultipleResults([
+                {
+                    id: 11,
+                    idOwner: 76,
+                    idRecipients: [42],
+                    isSeen: false,
+                    eventResults: [],
+                    contentOfResult: 'Test'
+                },
+                {
+                    id: 12,
+                    idOwner: 76,
+                    idRecipients: [42],
+                    isSeen: false,
+                    eventResults: [],
+                    contentOfResult: 'Test'
+                },
+                {
+                    id: 13,
+                    idOwner: 76,
+                    idRecipients: [42],
+                    isSeen: false,
+                    eventResults: [],
+                    contentOfResult: 'Test'
+                },
+            ]);
+        });
+
+        //ps : je ne veux pas que les event de création soi initialisé dans le beforeEach ci dessus mais directement dans le resultService
+        it('devrait avoir la list des résultat dans l\'ordre de création ( en se basant sur les events de création)',
+            fakeAsync(() => {
+                expect(resultService.results[0].eventResults[0].createdAt.getTime())
+                    .toBeLessThanOrEqual(resultService.results[2].eventResults[0].createdAt.getTime());
+            })
+        );
+
+        it('devrait avoir 1 event a la date de maintenant quand 1 résultat est vue',
+            fakeAsync(() => {
+                const result = resultService.seenResult(11);
+                const now = new Date();
+                expect(result.eventResults[result.eventResults.length - 1].createdAt.getTime()).toEqual(now.getTime());
+            })
+        );
+
+        it('devrait avoir 2 events avec 2 dates différent aprés la vision d\'un resultat puis la suppression de la vision',
+            fakeAsync(() => {
+                // attente d'une seconde
+                tick(1000);
+                const result = resultService.unseenResult(11);
+                expect(result.eventResults.length).toEqual(2);
+                expect(result.eventResults[0].createdAt.getTime()).toBeLessThan(result.eventResults[1].createdAt.getTime());
+            })
+        );
+
+        it('devrait avoir une fonction qui retourne une liste ordonnée des resultats par rapport au dernier modifier',
+            fakeAsync(() => {
+                expect(resultService.sortResultByDate()).toEqual(resultService.results);
+            })
+        );
+    });
 });
