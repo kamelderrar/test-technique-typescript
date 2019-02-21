@@ -5,6 +5,6 @@ export interface ResultModel {
     idOwner: number;
     idRecipients: number[];
     isSeen: boolean;
-    eventResults: ResultEventModel[];
+    eventResults: Array<ResultEventModel>;
     contentOfResult: string;
 }
