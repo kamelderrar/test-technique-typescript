@@ -61,51 +61,90 @@ describe('ResultService', () => {
             })
         );
     });
-    //
-    // /* step 2 : 3 resultats */
-    // describe('aprés l'ajout de 3 resultats,', () => {
-    //
-    //   beforeEach(() => {
-    //     // init le service avec 3 resultats
-    //   });
-    //
-    //   it('devrait avoir une liste de 3 resultats non vue aprés l\'ajout de 3 resultat.',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    //
-    //   it('ne devrait pas authorisé l'ajout d'un résultats avec un id existent',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    //
-    //   it('devrait avoir 1 resultats vue dans la liste aprés la vision d\'un resultat',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    //
-    //   it('devrait avoir les 3 resultats vue dans la liste aprés qu\'il soit tous vue',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    //
-    //   it('devrait avoir plus que 2 resultats vue dans la liste aprés qu\'il soit tous vue puis 1 ou la vue est enlevé',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    //
-    //   it('ne devrait pas planté aprés la vision d\'un resultat non ajouté',
-    //     fakeAsync(() => {
-    //       expect(false).toEqual(true);
-    //     })
-    //   );
-    // });
-    //
+
+    /* step 2 : 3 resultats */
+    describe('aprés l\'ajout de 3 resultats,', () => {
+
+      beforeEach(() => {
+          // init le service avec 3 resultats
+          resultService.results = [
+            {
+                id: 46,
+                idOwner: 76,
+                idRecipients: [42],
+                isSeen: false,
+                eventResults: [],
+                contentOfResult: 'Test'
+            },
+            {
+                id: 47,
+                idOwner: 76,
+                idRecipients: [42],
+                isSeen: false,
+                eventResults: [],
+                contentOfResult: 'Test'
+            },
+            {
+                id: 48,
+                idOwner: 76,
+                idRecipients: [42],
+                isSeen: false,
+                eventResults: [],
+                contentOfResult: 'Test'
+            },
+        ];
+      });
+
+      it('devrait avoir une liste de 3 resultats non vue aprés l\'ajout de 3 resultat.',
+        fakeAsync(() => {
+            expect(resultService.getAllResultUnSeen().length).toEqual(3);
+        })
+      );
+
+      it('ne devrait pas authorisé l\'ajout d\'un résultats avec un id existent',
+        fakeAsync(() => {
+            const result: ResultModel = {
+                id: 47,
+                idOwner: 76,
+                idRecipients: [42],
+                isSeen: true,
+                eventResults: [],
+                contentOfResult: 'Test'
+            };
+            expect(resultService.addResult(result)).toEqual(false);
+        })
+      );
+
+      it('devrait avoir 1 resultats vue dans la liste aprés la vision d\'un resultat',
+        fakeAsync(() => {
+          resultService.seenResult(47);
+            expect(resultService.getAllResultSeen().length).toEqual(1);
+        })
+      );
+
+      it('devrait avoir les 3 resultats vue dans la liste aprés qu\'il soit tous vue',
+        fakeAsync(() => {
+            resultService.results.map(result => resultService.seenResult(result.id));
+            expect(resultService.getAllResultSeen().length).toEqual(3);
+        })
+      );
+
+      it('devrait avoir plus que 2 resultats vue dans la liste aprés qu\'il soit tous vue puis 1 ou la vue est enlevé',
+        fakeAsync(() => {
+            resultService.results.map(result => resultService.seenResult(result.id));
+            expect(resultService.getAllResultSeen().length).toBeGreaterThan(2);
+            resultService.unseenResult(47);
+            expect(resultService.getAllResultUnSeen().length).toEqual(1);
+        })
+      );
+
+      it('ne devrait pas planté aprés la vision d\'un resultat non ajouté',
+        fakeAsync(() => {
+          expect(resultService.seenResult(88)).toEqual(false);
+        })
+      );
+    });
+
     //
     // /* step 3 (evenement) */
     // describe(',aprés l\'ajout de 3 resultats,', () => {
