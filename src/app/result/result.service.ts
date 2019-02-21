@@ -13,12 +13,20 @@ export class ResultService {
   results: Array<ResultModel> = [];
 
   public addResult(newResult: ResultModel) {
+
+    if (this.results.some(result => result.id === newResult.id)) {
+      return false;
+    }
+
     this.results.push(newResult);
     return this.results;
   }
 
   public seenResult(idResult: number) {
     const resIndex = this.results.findIndex(result => result.id === idResult);
+    if (resIndex === -1) {
+      return false;
+    }
     this.results[resIndex].isSeen = true;
     return this.results;
   }
